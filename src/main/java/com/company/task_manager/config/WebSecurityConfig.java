@@ -61,19 +61,15 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Enable CORS using the bean defined below. This is the standard way.
                 .cors(Customizer.withDefaults())
-                // 2. Disable CSRF for stateless APIs
                 .csrf(AbstractHttpConfigurer::disable)
-                // 3. Set up exception handling for authentication errors
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                // 4. Configure session management to be stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 5. Define authorization rules for all HTTP requests
                 .authorizeHttpRequests(auth -> auth
-                        // Allow anyone to access the authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Require authentication for any other request
+                        .requestMatchers("/").permitAll() // Allow public access to root URL
+                        .requestMatchers("/health").permitAll() // Allow public access to health check
+                        .requestMatchers("/api/public/**").permitAll() // Allow other public endpoints
                         .anyRequest().authenticated()
                 );
 
@@ -83,17 +79,15 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    // This bean defines the global CORS configuration for the application.
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // IMPORTANT: Add your deployed frontend's URL here once you deploy it
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://your-frontend-url.onrender.com"));
+        // Update with your actual frontend URL once deployed
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://<your-actual-frontend-url>.onrender.com"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Apply this CORS configuration to all paths in your application
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
