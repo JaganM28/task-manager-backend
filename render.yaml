@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: task-manager-backend
+    runtime: java
+    region: singapore
+    plan: free
+    build:
+      command: "mvn clean package -DskipTests"
+    start:
+      command: "java -jar target/task-manager-0.0.1-SNAPSHOT.jar"
