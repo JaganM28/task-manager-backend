@@ -79,10 +79,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // THE DEFINITIVE FIX: Explicitly list all trusted origins.
-        // We need to trust your local development server.
-        // We also add a placeholder for your future deployed frontend.
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://your-frontend-name.onrender.com"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://task-manager-frontend-idd9.onrender.com/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
